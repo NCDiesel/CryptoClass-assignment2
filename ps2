@@ -67,19 +67,24 @@ for key in myJSON:
             for n in range(0,len(newPT[m])):
                 op = newPT[m][n]['op']
                 newAmount = 0
-                if (newPT[m][n]['co'] == 'MSFT'):
-                    newAmount = maxAmounts[op]['AAPL']
-                elif (newPT[m][n]['co'] == 'AAPL'):
-                    newAmount = maxAmounts[op]['MSFT']
+                keyList = []
+                for key in maxAmounts[op]:
+                    keyList.append(key)
+                if (newPT[m][n]['co'] == keyList[0]):
+                    newAmount = maxAmounts[op][keyList[1]]
+                elif (newPT[m][n]['co'] == keyList[1]):
+                    newAmount = maxAmounts[op][keyList[0]]
                 newTradeString = '{:1} {:4}:{:<9d}'.format(newPT[m][n]['op'], newPT[m][n]['co'], newAmount)
                 workingArray.append(newTradeString)
             newTradesArray.append(workingArray)
+        print(newTradesArray)
         for o in range(0, len(newTradesArray)):
             workingString = ""
             for p in range(0,len(newTradesArray[o])):
                 workingString += newTradesArray[o][p]
             workingByteArray = bytearray(workingString.encode())
             outList.append(binascii.hexlify(workingByteArray).decode())
+            # outList.append(workingString)
 
         outJSON['problem 1'] = outList
         # oldPTByteArray = bytearray.fromhex(oldPT) 
