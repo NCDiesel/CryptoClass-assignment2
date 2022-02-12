@@ -72,14 +72,11 @@ for key in myJSON:
                 newTradeString = '{:1} {:4}:{:<9d}'.format(newPT[m][n]['op'], newPT[m][n]['co'], newAmount)
                 workingArray.append(newTradeString)
             newTradesArray.append(workingArray)
-        print(newTradesArray)
         for o in range(0, len(newTradesArray)):
             workingString = ""
             for p in range(0,len(newTradesArray[o])):
                 workingString += newTradesArray[o][p]
-            print(workingString)
             workingByteArray = bytearray(workingString.encode())
-            print(binascii.hexlify(workingByteArray))
             outList.append(binascii.hexlify(workingByteArray).decode())
 
         outJSON['problem 1'] = outList
