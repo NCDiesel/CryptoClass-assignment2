@@ -37,7 +37,7 @@ for key in myJSON:
 
         # Create structure from which to rebuild trade string and keep
         # track of maximum for switching things up later
-        maxAmounts = {'S': {'AAPL': 0, 'MSFT': 0}, 'B': {'AAPL': 0, 'MSFT': 0}}
+        maxAmounts = {'S': {}, 'B': {}}
         for i in range(0,len(splitNT)):
             workingArray = []
             for j in range(0,len(splitNT[i])):
@@ -50,6 +50,8 @@ for key in myJSON:
                         tradeDict['op'] = op
                         tradeDict['co'] = co
                         tradeDict['amount'] = int(amount,10)
+                        if (not co in maxAmounts[op]):
+                            maxAmounts[op][co] = 0
                         if (tradeDict['amount'] > maxAmounts[op][co]):
                             maxAmounts[op][co] = tradeDict['amount']
                         workingArray.append(tradeDict)
