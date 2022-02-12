@@ -1,0 +1,116 @@
+#!/usr/bin/env python3
+from curses import KEY_REPLACE
+import json
+import sys
+import binascii
+import secrets
+
+########################################################
+#  Assistance and reference materials:
+#
+#  Previous programs completed for assignments in my Offensive 
+#     Security class(did a lot with hex there)
+#  Class materials and "Jack's Video"
+#  Python Documentation
+#  Stack Overflow to clarify some syntax, python
+#      dictionary structure and python 2 vs 3 diffs
+#  Two students helped with the mechanics and logistics
+#      of Gradescope
+########################################################
+
+myJSON = json.load(sys.stdin)
+outJSON={}
+outList = []
+for key in myJSON:
+    if (key == "problem 1"):
+        # 128 bit blocks
+        oldPT = myJSON['problem 1']['old_pt']
+        oldCT = myJSON['problem 1']['old_ct']
+        newCT = myJSON['problem 1']['new_trades']
+        splitPT = [oldPT[i:i+32] for i in range(0, len(oldPT), 32)]
+        splitCT = [oldCT[i:i+32] for i in range(0, len(oldCT), 32)]
+        splitNT, newPT = [], []
+        tradeDict = {}
+        for i in range(0, len(newCT)):
+            newTradeLine = [newCT[i][x:x+32] for x in range(0, len(newCT[i]), 32)]
+            splitNT.append(newTradeLine)
+
+        # Create structure from which to rebuild trade string and keep
+        # track of maximum for switching things up later
+        maxAmounts = {'S': {'AAPL': 0, 'MSFT': 0}, 'B': {'AAPL': 0, 'MSFT': 0}}
+        for i in range(0,len(splitNT)):
+            workingArray = []
+            for j in range(0,len(splitNT[i])):
+                for k in range(0, len(splitCT)):
+                    if (splitNT[i][j] == splitCT[k]):
+                        oldPTByteArray = bytearray.fromhex(splitPT[k])
+                        oldPTCharString = oldPTByteArray.decode()
+                        [opco,amount] = oldPTCharString.split(":")
+                        [op,co] = opco.split()
+                        tradeDict['op'] = op
+                        tradeDict['co'] = co
+                        tradeDict['amount'] = int(amount,10)
+                        if (tradeDict['amount'] > maxAmounts[op][co]):
+                            maxAmounts[op][co] = tradeDict['amount']
+                        workingArray.append(tradeDict)
+                        tradeDict = {}
+            newPT.append(workingArray)
+
+        # Switch up trades
+        newTradesArray = []
+        newTradeString = ''
+        workingArray = []
+        for m in range(0, len(newPT)):
+            workingArray = []
+            for n in range(0,len(newPT[m])):
+                op = newPT[m][n]['op']
+                newAmount = 0
+                if (newPT[m][n]['co'] == 'MSFT'):
+                    newAmount = maxAmounts[op]['AAPL']
+                elif (newPT[m][n]['co'] == 'AAPL'):
+                    newAmount = maxAmounts[op]['MSFT']
+                newTradeString = '{:1} {:4}:{:<9d}'.format(newPT[m][n]['op'], newPT[m][n]['co'], newAmount)
+                workingArray.append(newTradeString)
+            newTradesArray.append(workingArray)
+        print(newTradesArray)
+        for o in range(0, len(newTradesArray)):
+            workingString = ""
+            for p in range(0,len(newTradesArray[o])):
+                workingString += newTradesArray[o][p]
+            print(workingString)
+            workingByteArray = bytearray(workingString.encode())
+            print(binascii.hexlify(workingByteArray))
+            outList.append(binascii.hexlify(workingByteArray).decode())
+
+        outJSON['problem 1'] = outList
+        # oldPTByteArray = bytearray.fromhex(oldPT) 
+        # oldCTByteArray = bytearray.fromhex(oldCT) 
+        # oldPTCharString = oldPTByteArray.decode()
+        # oldCTCharString = oldCTByteArray.decode()
+
+    elif (key == "problem 2"):
+        outList=[]
+        # charString = ""
+        # for hexString in myJSON[key]:
+        #     hexByteArray = bytearray.fromhex(hexString) 
+        #     charString = hexByteArray.decode()
+        #     outList.append(charString)
+        outJSON['problem 2'] = outList
+    elif (key == "problem 3"):
+        outList=[]
+        # charString = ""
+        # for hexString in myJSON[key]:
+        #     newByteArray = bytearray()
+        #     hexByteArray = bytearray.fromhex(hexString)
+        #     for i in range(0, len(hexByteArray)):
+        #         newByteArray.append(int(hex(((hexByteArray[i] + int(b'0x20', 16) + i) % 256)),16))
+        #     outList.append(binascii.hexlify(newByteArray).decode())
+        outJSON['problem 3'] = outList
+    elif (key == "problem 4"):
+        outList=[]
+        # for randomInput in myJSON[key]:
+        #     newSecret = secrets.SystemRandom()
+        #     outList.append(newSecret.randrange(0,randomInput))
+        outJSON['problem 4'] = outList
+
+print(json.dumps(outJSON, indent="  "))
