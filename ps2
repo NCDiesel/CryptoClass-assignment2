@@ -19,6 +19,7 @@ import secrets
 ########################################################
 
 myJSON = json.load(sys.stdin)
+print(json.dumps(myJSON, indent="  "), file=sys.stderr)
 outJSON={}
 outList = []
 for key in myJSON:
@@ -27,6 +28,10 @@ for key in myJSON:
         oldPT = myJSON['problem 1']['old_pt']
         oldCT = myJSON['problem 1']['old_ct']
         newCT = myJSON['problem 1']['new_trades']
+        op_1 = myJSON['problem 1']['op_1']
+        co_1 = myJSON['problem 1']['co_1']
+        op_2 = myJSON['problem 1']['op_2']
+        co_2 = myJSON['problem 1']['co_2']
         splitPT = [oldPT[i:i+32] for i in range(0, len(oldPT), 32)]
         splitCT = [oldCT[i:i+32] for i in range(0, len(oldCT), 32)]
         splitNT, newPT = [], []
@@ -50,14 +55,15 @@ for key in myJSON:
                         tradeDict['op'] = op
                         tradeDict['co'] = co
                         tradeDict['amount'] = int(amount,10)
-                        if (not co in maxAmounts[op]):
-                            maxAmounts[op][co] = 0
-                        if (tradeDict['amount'] > maxAmounts[op][co]):
-                            maxAmounts[op][co] = tradeDict['amount']
+                        # if (not co in maxAmounts[op]):
+                        #     maxAmounts[op][co] = 0
+                        # if (tradeDict['amount'] > maxAmounts[op][co]):
+                        #     maxAmounts[op][co] = tradeDict['amount']
                         workingArray.append(tradeDict)
                         tradeDict = {}
             newPT.append(workingArray)
 
+        print('WTF', newPT, file=sys.stderr)
         # Switch up trades
         newTradesArray = []
         newTradeString = ''
@@ -66,18 +72,15 @@ for key in myJSON:
             workingArray = []
             for n in range(0,len(newPT[m])):
                 op = newPT[m][n]['op']
-                newAmount = 0
-                keyList = []
-                for key in maxAmounts[op]:
-                    keyList.append(key)
-                print(keyList)
-                if (newPT[m][n]['co'] == keyList[0]):
-                    newAmount = maxAmounts[op][keyList[1]]
-                elif (newPT[m][n]['co'] == keyList[1]):
-                    newAmount = maxAmounts[op][keyList[0]]
-                newTradeString = '{:1} {:4}:{:<9d}'.format(newPT[m][n]['op'], newPT[m][n]['co'], newAmount)
+                tempOp = newPT[m][n]['op']
+                tempCo = newPT[m][n]['co']
+                if (newPT[m][n]['op'] == op_1 and newPT[m][n]['co'] == co_1 ):
+                    tempOp = op_2
+                    tempCo = co_2
+                newTradeString = '{:1} {:4}:{:<9d}'.format(tempOp, tempCo, newPT[m][n]['amount'])
                 workingArray.append(newTradeString)
             newTradesArray.append(workingArray)
+        print(newTradesArray, file=sys.stderr)
 
         for o in range(0, len(newTradesArray)):
             workingString = ""
