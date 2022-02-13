@@ -42,53 +42,53 @@ for key in myJSON:
 
         # Create structure from which to rebuild trade string and keep
         # track of maximum for switching things up later
-        maxAmounts = {'S': {}, 'B': {}}
-        for i in range(0,len(splitNT)):
-            workingArray = []
-            for j in range(0,len(splitNT[i])):
-                for k in range(0, len(splitCT)):
-                    if (splitNT[i][j] == splitCT[k]):
-                        oldPTByteArray = bytearray.fromhex(splitPT[k])
-                        oldPTCharString = oldPTByteArray.decode()
-                        [opco,amount] = oldPTCharString.split(":")
-                        [op,co] = opco.split()
-                        tradeDict['op'] = op
-                        tradeDict['co'] = co
-                        tradeDict['amount'] = int(amount,10)
-                        # if (not co in maxAmounts[op]):
-                        #     maxAmounts[op][co] = 0
-                        # if (tradeDict['amount'] > maxAmounts[op][co]):
-                        #     maxAmounts[op][co] = tradeDict['amount']
-                        workingArray.append(tradeDict)
-                        tradeDict = {}
-            newPT.append(workingArray)
+        # maxAmounts = {'S': {}, 'B': {}}
+        # for i in range(0,len(splitNT)):
+        #     workingArray = []
+        #     for j in range(0,len(splitNT[i])):
+        #         for k in range(0, len(splitCT)):
+        #             if (splitNT[i][j] == splitCT[k]):
+        #                 oldPTByteArray = bytearray.fromhex(splitPT[k])
+        #                 oldPTCharString = oldPTByteArray.decode()
+        #                 [opco,amount] = oldPTCharString.split(":")
+        #                 [op,co] = opco.split()
+        #                 tradeDict['op'] = op
+        #                 tradeDict['co'] = co
+        #                 tradeDict['amount'] = int(amount,10)
+        #                 # if (not co in maxAmounts[op]):
+        #                 #     maxAmounts[op][co] = 0
+        #                 # if (tradeDict['amount'] > maxAmounts[op][co]):
+        #                 #     maxAmounts[op][co] = tradeDict['amount']
+        #                 workingArray.append(tradeDict)
+        #                 tradeDict = {}
+        #     newPT.append(workingArray)
 
-        # print('WTF', newPT, file=sys.stderr)
-        # Switch up trades
-        newTradesArray = []
-        newTradeString = ''
-        workingArray = []
-        for m in range(0, len(newPT)):
-            workingArray = []
-            for n in range(0,len(newPT[m])):
-                op = newPT[m][n]['op']
-                tempOp = newPT[m][n]['op']
-                tempCo = newPT[m][n]['co']
-                if (newPT[m][n]['op'] == op_1 and newPT[m][n]['co'] == co_1 ):
-                    tempOp = op_2
-                    tempCo = co_2
-                newTradeString = '{:1} {:4}:{:<9d}'.format(tempOp, tempCo, newPT[m][n]['amount'])
-                workingArray.append(newTradeString)
-            newTradesArray.append(workingArray)
-        # print(newTradesArray, file=sys.stderr)
+        # # print('WTF', newPT, file=sys.stderr)
+        # # Switch up trades
+        # newTradesArray = []
+        # newTradeString = ''
+        # workingArray = []
+        # for m in range(0, len(newPT)):
+        #     workingArray = []
+        #     for n in range(0,len(newPT[m])):
+        #         op = newPT[m][n]['op']
+        #         tempOp = newPT[m][n]['op']
+        #         tempCo = newPT[m][n]['co']
+        #         if (newPT[m][n]['op'] == op_1 and newPT[m][n]['co'] == co_1 ):
+        #             tempOp = op_2
+        #             tempCo = co_2
+        #         newTradeString = '{:1} {:4}:{:<9d}'.format(tempOp, tempCo, newPT[m][n]['amount'])
+        #         workingArray.append(newTradeString)
+        #     newTradesArray.append(workingArray)
+        # # print(newTradesArray, file=sys.stderr)
 
-        for o in range(0, len(newTradesArray)):
-            workingString = ""
-            for p in range(0,len(newTradesArray[o])):
-                workingString += newTradesArray[o][p]
-            workingByteArray = bytearray(workingString.encode())
-            outList.append(binascii.hexlify(workingByteArray).decode())
-            # outList.append(workingString)
+        # for o in range(0, len(newTradesArray)):
+        #     workingString = ""
+        #     for p in range(0,len(newTradesArray[o])):
+        #         workingString += newTradesArray[o][p]
+        #     workingByteArray = bytearray(workingString.encode())
+        #     outList.append(binascii.hexlify(workingByteArray).decode())
+        #     # outList.append(workingString)
 
         outJSON['problem 1'] = outList
         # oldPTByteArray = bytearray.fromhex(oldPT) 
