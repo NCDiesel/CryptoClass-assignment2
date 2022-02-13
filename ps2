@@ -19,7 +19,7 @@ import secrets
 ########################################################
 
 myJSON = json.load(sys.stdin)
-print(json.dumps(myJSON, indent="  "), file=sys.stderr)
+# print(json.dumps(myJSON, indent="  "), file=sys.stderr)
 outJSON={}
 outList = []
 for key in myJSON:
@@ -63,7 +63,7 @@ for key in myJSON:
                         tradeDict = {}
             newPT.append(workingArray)
 
-        print('WTF', newPT, file=sys.stderr)
+        # print('WTF', newPT, file=sys.stderr)
         # Switch up trades
         newTradesArray = []
         newTradeString = ''
@@ -80,7 +80,7 @@ for key in myJSON:
                 newTradeString = '{:1} {:4}:{:<9d}'.format(tempOp, tempCo, newPT[m][n]['amount'])
                 workingArray.append(newTradeString)
             newTradesArray.append(workingArray)
-        print(newTradesArray, file=sys.stderr)
+        # print(newTradesArray, file=sys.stderr)
 
         for o in range(0, len(newTradesArray)):
             workingString = ""
